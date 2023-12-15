@@ -1,18 +1,28 @@
 import cv2
 import numpy
 
-cap = cv2.VideoCapture(0)
-face_cascade = cv2.CascadeClassifier("haarcascade_frontalface_default.xml")
+
+face_cascade = cv2.CascadeClassifier("/Users/jinseo/Desktop/코딩/oss_python/Real-time-face-mosaic-processing-with-OpenCV/haarcascade_frontalface_default.xml")
+cap = cv2.VideoCapture(0) #노트북 웹캠을 카메라로 사용
 
 cap.set(3,640) # 너비
 cap.set(4,480) # 높이
 
 while(cap.isOpened()):
     ret, frame = cap.read() 
+    if not ret:
+        break
     frame = cv2.flip(frame, 1) # 좌우 대칭
-    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY) # 흑백 변환
 
-    faces = face_cascade.detectMultiScale(gray,1.05,5) 
+    faces = face_cascade.detectMultiScale(gray,1.05,5) # 얼굴 감지
+
+    centers = [] # 얼굴 감지 후 얼굴 중심점을 계산
+    for (x, y, w, h) in faces:
+        center_x = x + w // 2
+        center_y = y + h // 2
+        centers.append((center_x, center_y))
+        
     print("Number of faces detected: " + str(len(faces)))
 
     if len(faces):
